@@ -1,16 +1,22 @@
-## Hi there 👋
+<h1 align="center">Judexindex</h1>
 
-<!--
-**Alp-a-max/Alp-a-max** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+<p align="center">Anime, manga and software</p>
 
-Here are some ideas to get you started:
+<p align="center">
+  <a href="https://anilist.co/user/judexindex/animelist">
+    <img src="https://raw.githubusercontent.com/Alp-a-max/Alp-a-max/main/metrics.plugin.anilist.svg" alt="AniList watching and reading lists" width="100%" />
+  </a>
+</p>
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+<h2 align="center">📌 Starred topics</h2>
+
+<table>
+  <tr>
+    <td align="center"><strong>With icons</strong></td>
+    <td align="center"><strong>With labels</strong></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Alp-a-max/Alp-a-max/main/metrics.plugin.topics.icons.svg" alt="Starred topics with icons" width="100%" /></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Alp-a-max/Alp-a-max/main/metrics.plugin.topics.svg" alt="Starred topics with labels" width="100%" /></td>
+  </tr>
+</table>

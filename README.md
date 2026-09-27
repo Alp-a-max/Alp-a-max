@@ -9,6 +9,7 @@
 </p>
 
 <h2 align="center">📌 Starred topics</h2>
+<p align="center"><em>Topics appear here as you star repositories on GitHub.</em></p>
 
 <table>
   <tr>

@@ -3,6 +3,16 @@
 <p align="center">Anime, manga and software</p>
 
 <p align="center">
+  <a href="https://www.linux.org/" title="Linux">
+    <img src="https://cdn.simpleicons.org/linux/FCC624" alt="Linux" height="44" />
+  </a>
+  &nbsp;&nbsp;
+  <a href="https://archlinux.org/" title="Arch Linux">
+    <img src="https://cdn.simpleicons.org/archlinux/1793D1" alt="Arch Linux" height="44" />
+  </a>
+</p>
+
+<p align="center">
   <a href="https://anilist.co/user/judexindex/animelist">
     <img src="https://raw.githubusercontent.com/Alp-a-max/Alp-a-max/main/metrics.plugin.anilist.svg" alt="AniList watching and reading lists" width="100%" />
   </a>

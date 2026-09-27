@@ -1,4 +1,4 @@
-name: Profile metrics
+name: Compact AniList profile
 
 on:
   schedule:
@@ -9,53 +9,76 @@ on:
       - main
     paths:
       - README.md
-      - .github/workflows/metrics.yml
 
 permissions:
   contents: write
 
 jobs:
-  metrics:
+  update-profile:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate AniList watching and reading lists
-        uses: lowlighter/metrics@latest
-        with:
-          token: NOT_NEEDED
-          committer_token: ${{ github.token }}
-          committer_branch: main
-          user: Alp-a-max
-          filename: metrics.plugin.anilist.svg
-          base: ""
-          plugin_anilist: yes
-          plugin_anilist_user: judexindex
-          plugin_anilist_medias: anime,manga
-          plugin_anilist_sections: watching,reading
-          plugin_anilist_limit: 4
-          plugin_anilist_shuffle: no
+      - name: Check out profile repository
+        uses: actions/checkout@v4
 
-      - name: Generate starred topics with icons
-        uses: lowlighter/metrics@latest
-        with:
-          token: NOT_NEEDED
-          committer_token: ${{ github.token }}
-          committer_branch: main
-          user: Alp-a-max
-          filename: metrics.plugin.topics.icons.svg
-          base: ""
-          plugin_topics: yes
-          plugin_topics_mode: icons
-          plugin_topics_limit: 0
+      - name: Generate compact AniList cards
+        env:
+          ANILIST_USER: judexindex
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const query = `query ($userName: String) {
+            anime: MediaListCollection(userName: $userName, type: ANIME, status: CURRENT) {
+              lists { entries { media { id title { english romaji } coverImage { medium } } } }
+            }
+            manga: MediaListCollection(userName: $userName, type: MANGA, status: CURRENT) {
+              lists { entries { media { id title { english romaji } coverImage { medium } } } }
+            }
+          }`;
+          const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
+            '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+          })[char]);
 
-      - name: Generate starred topics with labels
-        uses: lowlighter/metrics@latest
-        with:
-          token: NOT_NEEDED
-          committer_token: ${{ github.token }}
-          committer_branch: main
-          user: Alp-a-max
-          filename: metrics.plugin.topics.svg
-          base: ""
-          plugin_topics: yes
-          plugin_topics_mode: labels
-          plugin_topics_limit: 12
+          async function main() {
+            const response = await fetch('https://graphql.anilist.co', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({ query, variables: { userName: process.env.ANILIST_USER } })
+            });
+            const result = await response.json();
+            if (!response.ok || result.errors) throw new Error(JSON.stringify(result.errors ?? result));
+
+            function section(heading, entries, mediaType) {
+              const cards = entries.slice(0, 4).map(({ media }) => {
+                const title = media.title.english || media.title.romaji || 'Untitled';
+                return `<td align="center" valign="top" width="25%"><a href="https://anilist.co/${mediaType}/${media.id}"><img src="${escapeHtml(media.coverImage.medium)}" alt="${escapeHtml(title)}" width="90" height="135" /><br /><strong>${escapeHtml(title)}</strong></a></td>`;
+              }).join('\n');
+              return `<h3 align="center">${heading}</h3>\n<table align="center"><tr>\n${cards}\n</tr></table>`;
+            }
+
+            const anime = result.data.anime.lists.flatMap((list) => list.entries);
+            const manga = result.data.manga.lists.flatMap((list) => list.entries);
+            const startMarker = '<!-- ANILIST:START -->';
+            const endMarker = '<!-- ANILIST:END -->';
+            const readme = fs.readFileSync('README.md', 'utf8');
+            const start = readme.indexOf(startMarker);
+            const end = readme.indexOf(endMarker);
+            if (start < 0 || end < start) throw new Error('AniList markers are missing from README.md');
+            const content = [startMarker, section('Currently watching', anime, 'anime'), section('Currently reading', manga, 'manga'), endMarker].join('\n\n');
+            const updated = readme.slice(0, start) + content + readme.slice(end + endMarker.length);
+            fs.writeFileSync('README.md', updated);
+          }
+
+          main().catch((error) => { console.error(error); process.exit(1); });
+          NODE
+
+      - name: Commit updated profile cards
+        run: |
+          if git diff --quiet -- README.md; then
+            echo "AniList cards are already up to date."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "Update compact AniList cards [skip actions]"
+          git push

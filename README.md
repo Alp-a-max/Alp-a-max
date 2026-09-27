@@ -10,6 +10,10 @@
   <a href="https://archlinux.org/" title="Arch Linux">
     <img src="https://cdn.simpleicons.org/archlinux/1793D1" alt="Arch Linux" height="44" />
   </a>
+  &nbsp;&nbsp;
+  <a href="https://cachyos.org/" title="CachyOS">
+    <img src="https://cdn.simpleicons.org/cachyos/16A5A3" alt="CachyOS" height="44" />
+  </a>
 </p>
 
 <p align="center">
